@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>{{ business.name }}</h1>
+        <p class="subtitle">Since {{ business.established }}</p>
+        <p>Transform your property with our expert stucco application, EIFS systems, and custom work. Serving all of Manitoba with quality craftsmanship you can trust.</p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('contact') }}" class="cta-button primary">Get Free Estimate</a>
+            <a href="tel:{{ business.phone }}" class="cta-button secondary">Call Now</a>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="features">
+        <div class="feature">
+            <div class="feature-icon"><i class="fas fa-home"></i></div>
+            <h3>Residential & Commercial</h3>
+            <p>Expert stucco services for both residential homes and commercial buildings throughout Manitoba.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><i class="fas fa-clock"></i></div>
+            <h3>On-Time Completion</h3>
+            <p>We pride ourselves on completing projects on schedule with excellent project management.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><i class="fas fa-users"></i></div>
+            <h3>Experienced Crew</h3>
+            <p>Our skilled team brings years of experience and expertise to every stucco project.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><i class="fas fa-star"></i></div>
+            <h3>Quality Materials</h3>
+            <p>We use only the highest quality materials to ensure long-lasting, beautiful results.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><i class="fas fa-tools"></i></div>
+            <h3>Custom Work</h3>
+            <p>Specializing in custom stucco work tailored to your specific requirements and vision.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon"><i class="fas fa-file-invoice"></i></div>
+            <h3>Free Estimates</h3>
+            <p>Get detailed estimates with 3D drawings and plans for your stucco project.</p>
+        </div>
+    </div>
+</section>
+
+<section style="background: white; padding: 4rem 0; margin: 2rem 0; border: 2px solid #c8e6c9; border-radius: 10px;">
+    <div class="container">
+        <h2 class="section-title">Why Choose Crown Stucco Ltd?</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; text-align: center;">
+            {% for specialty in business.specialties %}
+            <div style="padding: 1rem;">
+                <i class="fas fa-check-circle" style="font-size: 2rem; color: #2d5a3d; margin-bottom: 1rem;"></i>
+                <h4 style="color: #000000; margin-bottom: 0.5rem;">{{ specialty }}</h4>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <h2 class="section-title">Contact Information</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; text-align: center;">
+            <div style="background: white; padding: 2rem; border-radius: 10px; border: 2px solid #c8e6c9;">
+                <i class="fas fa-phone" style="font-size: 2rem; color: #2d5a3d; margin-bottom: 1rem;"></i>
+                <h4 style="color: #000000; margin-bottom: 0.5rem;">Call</h4>
+                <p style="color: #000000; font-size: 1.1rem; font-weight: bold;">{{ business.phone }}</p>
+                <p style="color: #000000; font-size: 1.1rem; font-weight: bold;">{{ business.phone_toor }}</p>
+            </div>
+            <div style="background: white; padding: 2rem; border-radius: 10px; border: 2px solid #c8e6c9;">
+                <i class="fas fa-envelope" style="font-size: 2rem; color: #2d5a3d; margin-bottom: 1rem;"></i>
+                <h4 style="color: #000000; margin-bottom: 0.5rem;">Email Us</h4>
+                <p style="color: #000000; font-size: 1rem; word-break: break-all;">{{ business.email }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

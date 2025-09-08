@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Services - Crown Stucco Ltd{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 0; background: white; margin: 2rem 0; border: 2px solid #c8e6c9; border-radius: 10px;">
+    <div class="container">
+        <h1 class="section-title">Our Services</h1>
+        <p class="section-subtitle">Crown Stucco Ltd offers comprehensive stucco services for residential and commercial properties throughout Manitoba. From new applications to custom work, we deliver quality results every time.</p>
+
+        <div class="services-grid">
+            {% for service in services %}
+            <div class="service-card">
+                <div class="service-icon">{{ service.icon }}</div>
+                <h3>{{ service.name }}</h3>
+                <p>{{ service.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <h2 class="section-title">Service Areas</h2>
+        <div style="text-align: center; max-width: 800px; margin: 0 auto; background: white; padding: 3rem; border-radius: 10px; border: 2px solid #c8e6c9;">
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; color: #000000;">We proudly serve <strong>{{ business.service_area }}</strong>, bringing professional stucco services directly to your location.</p>
+            <p style="color: #000000;">Whether you're in Winnipeg, Brandon, Steinbach, or anywhere else in Manitoba, our experienced crew will travel to your project site with all the necessary equipment and materials.</p>
+        </div>
+    </div>
+</section>
+
+<section style="padding: 4rem 0; background: white; margin: 2rem 0; border: 2px solid #c8e6c9; border-radius: 10px;">
+    <div class="container">
+        <h2 class="section-title">What Makes Us Different</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+            {% for specialty in business.specialties %}
+            <div style="text-align: center; padding: 2rem;">
+                <i class="fas fa-check-circle" style="font-size: 3rem; color: #2d5a3d; margin-bottom: 1rem;"></i>
+                <h4 style="color: #000000; margin-bottom: 1rem;">{{ specialty }}</h4>
+                <p style="color: #000000;">
+                    {% if specialty == "On-time job completion" %}
+                    We understand the importance of meeting deadlines and always deliver projects on schedule.
+                    {% elif specialty == "Good management" %}
+                    Our project management ensures smooth coordination and clear communication throughout your project.
+                    {% elif specialty == "Experienced crew" %}
+                    Our team brings years of expertise and craftsmanship to every stucco application.
+                    {% elif specialty == "High-quality materials" %}
+                    We source and use only the finest materials to ensure durability and longevity.
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section style="padding: 4rem 0;">
+    <div class="container">
+        <h2 class="section-title">Ready to Get Started?</h2>
+        <div style="text-align: center; background: white; padding: 3rem; border-radius: 10px; border: 2px solid #c8e6c9;">
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; color: #000000;">Contact us today for your free estimate with detailed 3D drawings and project plans.</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('contact') }}" class="cta-button primary">Get Free Estimate</a>
+                <a href="tel:{{ business.phone }}" class="cta-button secondary">Call Gill: {{ business.phone }}</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
