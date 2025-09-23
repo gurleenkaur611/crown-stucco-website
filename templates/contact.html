@@ -1,136 +1,193 @@
-{% extends "base.html" %}
+from flask import Flask, render_template, request, redirect, url_for, flash
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+from datetime import datetime
 
-{% block title %}Contact - Crown Stucco Ltd{% endblock %}
+app = Flask(__name__)
+app.secret_key = 'crown_stucco_secret_key_2025'  # Change this in production
 
-{% block content %}
-<section style="padding: 4rem 0;">
-    <div class="container">
-        <h1 class="section-title">Contact Us</h1>
-        <p class="section-subtitle">Ready to start your stucco project? Get in touch with Crown Stucco Ltd for a free estimate with detailed 3D drawings and project plans.</p>
+# Email Configuration (you'll need to set these)
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+EMAIL_ADDRESS = "crownstuccoltd@gmail.com"  # Your uncle's business email
+EMAIL_PASSWORD = ""  # You'll need to set this up with Gmail App Password
 
-        <div class="contact-content">
-            <div class="contact-form">
-                <h3 style="color: #000000; margin-bottom: 2rem; text-align: center;">Get Your Free Estimate</h3>
-                <form action="https://formspree.io/f/xqaykqaj" method="POST" id="contact-form">
-                    <input type="hidden" name="_next" value="https://crown-stucco.onrender.com/contact?success=true">
-                    <input type="hidden" name="_subject" value="Crown Stucco Inquiry" id="subject-field">
+# Business Information
+BUSINESS_INFO = {
+    'name': 'Crown Stucco Ltd',
+    'address': '46 Tivoli Lane',
+    'city': 'West St. Paul, MB',
+    'phone': '204-898-2832',
+    'phone_toor': '204-962-8082',
+    'email': 'crownstuccoltd@gmail.com',
+    'hours': {
+        'weekdays': '7:30 AM - 5:00 PM',
+        'saturday': '7:30 AM - 5:00 PM',
+        'sunday': 'Closed'
+    },
+    'service_area': 'Anywhere in Manitoba',
+    'established': '2021',
+    'specialties': [
+        'On-time job completion',
+        'Good management',
+        'Experienced crew',
+        'High-quality materials'
+    ]
+}
 
-                    <div class="form-group">
-                        <label for="name">Full Name *</label>
-                        <input type="text" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email Address *</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone">
-                    </div>
-                    <div class="form-group">
-                        <label for="service">Service Needed</label>
-                        <select id="service" name="service">
-                            <option value="">Select a service</option>
-                            <option value="residential-stucco">Residential Stucco</option>
-                            <option value="commercial-stucco">Commercial Stucco</option>
-                            <option value="eifs">EIFS Systems</option>
-                            <option value="house-wrap">House Wrap Installation</option>
-                            <option value="paper-wire">Paper Wire Systems</option>
-                            <option value="custom-work">Custom Work</option>
-                            <option value="repair">Stucco Repair</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Project Details *</label>
-                        <textarea id="message" name="message" rows="5" required placeholder="Please describe your project, include approximate size, timeline, and any specific requirements. For accurate estimates, please mention if you have or need 3D drawings/plans."></textarea>
-                    </div>
-                    <button type="submit" class="cta-button primary" style="width: 100%;">Send Message</button>
-                </form>
-            </div>
-
-            <div class="contact-info">
-                <h3 style="color: #000000; margin-bottom: 2rem;">Get In Touch</h3>
-                <div class="contact-item">
-                    <div class="contact-item-icon"><i class="fas fa-phone"></i></div>
-                    <div>
-                        <strong>Call:</strong><br>
-                        <a href="tel:{{ business.phone }}" style="color: #2d5a3d; font-size: 1.1rem; font-weight: bold;">{{ business.phone }}</a><br>
-                        <a href="tel:{{ business.phone_toor }}" style="color: #2d5a3d; font-size: 1.1rem; font-weight: bold;">{{ business.phone_toor }}</a>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-item-icon"><i class="fas fa-envelope"></i></div>
-                    <div>
-                        <strong>Email:</strong><br>
-                        <a href="mailto:{{ business.email }}" style="color: #2d5a3d; word-break: break-all;">{{ business.email }}</a>
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-item-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div>
-                        <strong>Address:</strong><br>
-                        {{ business.address }}<br>
-                        {{ business.city }}
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-item-icon"><i class="fas fa-clock"></i></div>
-                    <div>
-                        <strong>Business Hours:</strong><br>
-                        Monday - Saturday: {{ business.hours.weekdays }}<br>
-                        Sunday: {{ business.hours.sunday }}
-                    </div>
-                </div>
-                <div class="contact-item">
-                    <div class="contact-item-icon"><i class="fas fa-map"></i></div>
-                    <div>
-                        <strong>Service Area:</strong><br>
-                        {{ business.service_area }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section style="background: white; padding: 4rem 0; margin: 2rem 0; border: 2px solid #c8e6c9; border-radius: 10px;">
-    <div class="container">
-        <h2 class="section-title">What to Expect</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; text-align: center;">
-            <div style="padding: 2rem;">
-                <i class="fas fa-phone" style="font-size: 2.5rem; color: #2d5a3d; margin-bottom: 1rem;"></i>
-                <h4 style="color: #000000; margin-bottom: 1rem;">1. Initial Contact</h4>
-                <p style="color: #000000;">Call us or fill out the form. We'll discuss your project requirements and schedule a site visit.</p>
-            </div>
-            <div style="padding: 2rem;">
-                <i class="fas fa-ruler-combined" style="font-size: 2.5rem; color: #2d5a3d; margin-bottom: 1rem;"></i>
-                <h4 style="color: #000000; margin-bottom: 1rem;">2. Site Assessment</h4>
-                <p style="color: #000000;">Our team will assess your property and take measurements for accurate planning.</p>
-            </div>
-            <div style="padding: 2rem;">
-                <i class="fas fa-drafting-compass" style="font-size: 2.5rem; color: #2d5a3d; margin-bottom: 1rem;"></i>
-                <h4 style="color: #000000; margin-bottom: 1rem;">3. 3D Plans & Estimate</h4>
-                <p style="color: #000000;">Receive detailed 3D drawings and a comprehensive estimate for your project.</p>
-            </div>
-            <div style="padding: 2rem;">
-                <i class="fas fa-hammer" style="font-size: 2.5rem; color: #2d5a3d; margin-bottom: 1rem;"></i>
-                <h4 style="color: #000000; margin-bottom: 1rem;">4. Professional Installation</h4>
-                <p style="color: #000000;">Our experienced crew completes your project on time with quality materials.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<script>
-document.getElementById('contact-form').addEventListener('submit', function() {
-    const name = document.getElementById('name').value.trim();
-    const subjectField = document.getElementById('subject-field');
-    if (name) {
-        subjectField.value = `Crown Stucco Inquiry from ${name}`;
-    } else {
-        subjectField.value = `Crown Stucco Inquiry - ${new Date().toLocaleString()}`;
+SERVICES = [
+    {
+        'name': 'Residential Stucco',
+        'description': 'Professional stucco application for homes and residential properties. We provide durable, weather-resistant finishes that enhance your home\'s curb appeal.',
+        'icon': '🏠'
+    },
+    {
+        'name': 'Commercial Stucco',
+        'description': 'Large-scale stucco solutions for commercial buildings, offices, and industrial properties. Reliable service for business owners.',
+        'icon': '🏢'
+    },
+    {
+        'name': 'EIFS Systems',
+        'description': 'Exterior Insulation and Finish Systems (EIFS) installation for improved energy efficiency and modern aesthetics.',
+        'icon': '🛡️'
+    },
+    {
+        'name': 'House Wrap Installation',
+        'description': 'Professional house wrap installation to protect your building structure from moisture and air infiltration.',
+        'icon': '🏗️'
+    },
+    {
+        'name': 'Paper Wire Systems',
+        'description': 'Traditional paper wire application for stucco base preparation, ensuring proper adhesion and longevity.',
+        'icon': '📏'
+    },
+    {
+        'name': 'Custom Work',
+        'description': 'We specialize in custom stucco work tailored to your specific requirements. No project is too unique for our experienced team.',
+        'icon': '⭐'
     }
-});
-</script>
-{% endblock %}
+]
+
+def send_confirmation_email(customer_name, customer_email, service, message):
+    """Send confirmation email to customer"""
+    try:
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_ADDRESS
+        msg['To'] = customer_email
+        msg['Subject'] = f"Thank you for contacting Crown Stucco Ltd - {customer_name}"
+
+        # Email body
+        body = f"""
+Dear {customer_name},
+
+Thank you for contacting Crown Stucco Ltd! We have received your inquiry and appreciate your interest in our services.
+
+Your Inquiry Details:
+- Service Requested: {service if service else 'General Inquiry'}
+- Message: {message}
+
+What happens next:
+• We will review your project details
+• One of our experienced team members will contact you within 24 hours
+• We'll schedule a free site assessment at your convenience
+• You'll receive a detailed estimate with 3D drawings and project plans
+
+Crown Stucco Ltd has been serving Manitoba since 2021 with:
+✓ On-time job completion
+✓ Experienced crew
+✓ High-quality materials
+✓ Professional management
+
+Contact Information:
+📞 Phone: 204-898-2832
+📞 Phone: 204-962-8082
+📧 Email: crownstuccoltd@gmail.com
+📍 Address: 46 Tivoli Lane, West St. Paul, MB
+
+Service Area: Anywhere in Manitoba
+Business Hours: Monday-Saturday 7:30 AM - 5:00 PM
+
+Thank you for choosing Crown Stucco Ltd for your stucco needs!
+
+Best regards,
+Crown Stucco Ltd Team
+Professional Stucco Services Since 2021
+        """
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Send email
+        if EMAIL_PASSWORD:  # Only send if password is configured
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            server.starttls()
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            text = msg.as_string()
+            server.sendmail(EMAIL_ADDRESS, customer_email, text)
+            server.quit()
+            return True
+        else:
+            print(f"Email configuration not complete. Would send confirmation to {customer_email}")
+            return False
+    except Exception as e:
+        print(f"Failed to send confirmation email: {e}")
+        return False
+
+@app.route('/')
+def home():
+    return render_template('home.html', business=BUSINESS_INFO)
+
+@app.route('/services')
+def services():
+    return render_template('services.html', services=SERVICES, business=BUSINESS_INFO)
+
+@app.route('/gallery')
+def gallery():
+    # In a real application, you would fetch images from a database or file system
+    gallery_items = [
+        {'title': 'Residential Exterior Project', 'description': 'Complete home exterior stucco application'},
+        {'title': 'Commercial Building', 'description': 'Large-scale commercial stucco project'},
+        {'title': 'EIFS Installation', 'description': 'Energy-efficient EIFS system application'},
+        {'title': 'Custom Texture Work', 'description': 'Specialized custom texture stucco finish'},
+        {'title': 'House Wrap Installation', 'description': 'Professional house wrap and preparation'},
+        {'title': 'Repair and Restoration', 'description': 'Expert stucco repair and color matching'},
+        {'title': 'Interior Specialty Work', 'description': 'Custom interior plaster application'},
+        {'title': 'Before/After Comparison', 'description': 'Transformation of aged stucco surface'},
+        {'title': 'Modern EIFS Finish', 'description': 'Contemporary EIFS application'},
+    ]
+    return render_template('gallery.html', gallery_items=gallery_items, business=BUSINESS_INFO)
+
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    success = request.args.get('success')
+    if success:
+        flash('Thank you for your message! We will get back to you within 24 hours.', 'success')
+
+    # Handle direct form submissions (backup method)
+    if request.method == 'POST':
+        try:
+            name = request.form.get('name')
+            email = request.form.get('email')
+            service = request.form.get('service')
+            message = request.form.get('message')
+
+            if name and email and message:
+                # Send confirmation email to customer
+                email_sent = send_confirmation_email(name, email, service, message)
+
+                if email_sent:
+                    flash('Thank you for your message! A confirmation email has been sent to you. We will get back to you within 24 hours.', 'success')
+                else:
+                    flash('Thank you for your message! We will get back to you within 24 hours.', 'success')
+
+                return redirect(url_for('contact'))
+        except Exception as e:
+            print(f"Error processing form: {e}")
+            flash('There was an error processing your message. Please try again.', 'error')
+
+    return render_template('contact.html', business=BUSINESS_INFO)
+
+if __name__ == '__main__':
+    app.run(debug=True)

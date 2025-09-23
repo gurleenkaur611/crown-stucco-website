@@ -8,6 +8,12 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'crown_stucco_secret_key_2025'  # Change this in production
 
+# Email Configuration
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+EMAIL_ADDRESS = "gillgurleen1636@gmail.com"  # Testing email
+EMAIL_PASSWORD = "sqzmwsbwgjesjcei"  # Gmail App Password
+
 # Business Information
 BUSINESS_INFO = {
     'name': 'Crown Stucco Ltd',
@@ -55,7 +61,7 @@ SERVICES = [
     {
         'name': 'Paper Wire Systems',
         'description': 'Traditional paper wire application for stucco base preparation, ensuring proper adhesion and longevity.',
-        'icon': '📐'
+        'icon': '📏'
     },
     {
         'name': 'Custom Work',
@@ -63,6 +69,72 @@ SERVICES = [
         'icon': '⭐'
     }
 ]
+
+
+def send_confirmation_email(customer_name, customer_email, service, message):
+    """Send confirmation email to customer"""
+    try:
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_ADDRESS
+        msg['To'] = customer_email
+        msg['Subject'] = f"Thank you for contacting Crown Stucco Ltd - {customer_name}"
+
+        # Email body
+        body = f"""
+Dear {customer_name},
+
+Thank you for contacting Crown Stucco Ltd! We have received your inquiry and appreciate your interest in our services.
+
+Your Inquiry Details:
+- Service Requested: {service if service else 'General Inquiry'}
+- Message: {message}
+
+What happens next:
+• We will review your project details
+• One of our experienced team members will contact you within 24 hours
+• We'll schedule a free site assessment at your convenience
+• You'll receive a detailed estimate with 3D drawings and project plans
+
+Crown Stucco Ltd has been serving Manitoba since 2021 with:
+✓ On-time job completion
+✓ Experienced crew
+✓ High-quality materials
+✓ Professional management
+
+Contact Information:
+📞 Phone: 204-898-2832
+📞 Phone: 204-962-8082
+📧 Email: crownstuccoltd@gmail.com
+📍 Address: 46 Tivoli Lane, West St. Paul, MB
+
+Service Area: Anywhere in Manitoba
+Business Hours: Monday-Saturday 7:30 AM - 5:00 PM
+
+Thank you for choosing Crown Stucco Ltd for your stucco needs!
+
+Best regards,
+Crown Stucco Ltd Team
+Professional Stucco Services Since 2021
+        """
+
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Send email
+        if EMAIL_PASSWORD:  # Only send if password is configured
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            server.starttls()
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            text = msg.as_string()
+            server.sendmail(EMAIL_ADDRESS, customer_email, text)
+            server.quit()
+            return True
+        else:
+            print(f"Email configuration not complete. Would send confirmation to {customer_email}")
+            return False
+    except Exception as e:
+        print(f"Failed to send confirmation email: {e}")
+        return False
 
 
 @app.route('/')
@@ -97,6 +169,30 @@ def contact():
     success = request.args.get('success')
     if success:
         flash('Thank you for your message! We will get back to you within 24 hours.', 'success')
+
+    # Handle direct form submissions (backup method)
+    if request.method == 'POST':
+        try:
+            name = request.form.get('name')
+            email = request.form.get('email')
+            service = request.form.get('service')
+            message = request.form.get('message')
+
+            if name and email and message:
+                # Send confirmation email to customer
+                email_sent = send_confirmation_email(name, email, service, message)
+
+                if email_sent:
+                    flash(
+                        'Thank you for your message! A confirmation email has been sent to you. We will get back to you within 24 hours.',
+                        'success')
+                else:
+                    flash('Thank you for your message! We will get back to you within 24 hours.', 'success')
+
+                return redirect(url_for('contact'))
+        except Exception as e:
+            print(f"Error processing form: {e}")
+            flash('There was an error processing your message. Please try again.', 'error')
 
     return render_template('contact.html', business=BUSINESS_INFO)
 
