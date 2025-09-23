@@ -94,31 +94,9 @@ def gallery():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        email = request.form.get('email')
-        phone = request.form.get('phone')
-        service = request.form.get('service')
-        message = request.form.get('message')
-
-        # Basic validation
-        if not name or not email or not message:
-            flash('Please fill in all required fields.', 'error')
-            return redirect(url_for('contact'))
-
-        # In a real application, you would send the email here
-        # For now, we'll just show a success message
+    success = request.args.get('success')
+    if success:
         flash('Thank you for your message! We will get back to you within 24 hours.', 'success')
-
-        # Log the contact form submission (in production, save to database)
-        print(f"Contact Form Submission - {datetime.now()}")
-        print(f"Name: {name}")
-        print(f"Email: {email}")
-        print(f"Phone: {phone}")
-        print(f"Service: {service}")
-        print(f"Message: {message}")
-
-        return redirect(url_for('contact'))
 
     return render_template('contact.html', business=BUSINESS_INFO)
 
