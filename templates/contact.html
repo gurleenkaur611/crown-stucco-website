@@ -11,9 +11,9 @@
         <div class="contact-content">
             <div class="contact-form">
                 <h3 style="color: #000000; margin-bottom: 2rem; text-align: center;">Get Your Free Estimate</h3>
-                <form action="https://formspree.io/f/xqaykqaj" method="POST">
+                <form action="https://formspree.io/f/xqaykqaj" method="POST" id="contact-form">
                     <input type="hidden" name="_next" value="https://crown-stucco.onrender.com/contact?success=true">
-                    <input type="hidden" name="_subject" value="New Contact Form Submission - Crown Stucco">
+                    <input type="hidden" name="_subject" value="Crown Stucco Inquiry" id="subject-field">
 
                     <div class="form-group">
                         <label for="name">Full Name *</label>
@@ -121,4 +121,16 @@
         </div>
     </div>
 </section>
+
+<script>
+document.getElementById('contact-form').addEventListener('submit', function() {
+    const name = document.getElementById('name').value.trim();
+    const subjectField = document.getElementById('subject-field');
+    if (name) {
+        subjectField.value = `Crown Stucco Inquiry from ${name}`;
+    } else {
+        subjectField.value = `Crown Stucco Inquiry - ${new Date().toLocaleString()}`;
+    }
+});
+</script>
 {% endblock %}
