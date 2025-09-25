@@ -452,10 +452,8 @@
         /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
-                display: flex;
                 justify-content: space-between;
                 align-items: center;
-                flex-direction: row;
             }
 
             .logo {
@@ -480,10 +478,11 @@
                 flex-direction: column;
                 width: 100%;
                 text-align: center;
-                background: linear-gradient(135deg, #2d5a3d, #4a7c59);
+                background: #2d5a3d;
                 padding: 1rem 0;
                 border-top: 1px solid #4a7c59;
                 margin: 0;
+                box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             }
 
             nav ul.show {
@@ -626,8 +625,8 @@
                     message.style.opacity = '0';
                     setTimeout(function() {
                         message.style.display = 'none';
-                    }, 500); // Wait for fade out animation
-                }, 15000); // 15 seconds
+                    }, 500);
+                }, 15000);
             });
         });
     </script>
