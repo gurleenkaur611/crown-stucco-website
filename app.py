@@ -4,7 +4,7 @@ import os
 app = Flask(__name__)
 app.secret_key = 'crown_stucco_secret_key_2025'
 
-# Force production mode - disable debug
+# Force production mode
 app.config['DEBUG'] = False
 app.config['TESTING'] = False
 
@@ -34,32 +34,32 @@ BUSINESS_INFO = {
 SERVICES = [
     {
         'name': 'Residential Stucco',
-        'description': 'Professional stucco application for homes and residential properties.',
+        'description': 'Professional stucco application for homes and residential properties. We provide durable, weather-resistant finishes that enhance your home\'s curb appeal.',
         'icon': 'house'
     },
     {
         'name': 'Commercial Stucco',
-        'description': 'Large-scale stucco solutions for commercial buildings and offices.',
+        'description': 'Large-scale stucco solutions for commercial buildings, offices, and industrial properties. Reliable service for business owners.',
         'icon': 'building'
     },
     {
         'name': 'EIFS Systems',
-        'description': 'Exterior Insulation and Finish Systems installation.',
+        'description': 'Exterior Insulation and Finish Systems (EIFS) installation for improved energy efficiency and modern aesthetics.',
         'icon': 'shield'
     },
     {
         'name': 'House Wrap Installation',
-        'description': 'Professional house wrap installation services.',
+        'description': 'Professional house wrap installation to protect your building structure from moisture and air infiltration.',
         'icon': 'tools'
     },
     {
         'name': 'Paper Wire Systems',
-        'description': 'Traditional paper wire application for stucco preparation.',
+        'description': 'Traditional paper wire application for stucco base preparation, ensuring proper adhesion and longevity.',
         'icon': 'ruler'
     },
     {
         'name': 'Custom Work',
-        'description': 'Custom stucco work tailored to your requirements.',
+        'description': 'We specialize in custom stucco work tailored to your specific requirements. No project is too unique for our experienced team.',
         'icon': 'star'
     }
 ]
@@ -80,7 +80,10 @@ def gallery():
         {'title': 'EIFS Installation', 'description': 'Energy-efficient EIFS system application'},
         {'title': 'Custom Texture Work', 'description': 'Specialized custom texture stucco finish'},
         {'title': 'House Wrap Installation', 'description': 'Professional house wrap and preparation'},
-        {'title': 'Repair and Restoration', 'description': 'Expert stucco repair and color matching'}
+        {'title': 'Repair and Restoration', 'description': 'Expert stucco repair and color matching'},
+        {'title': 'Interior Specialty Work', 'description': 'Custom interior plaster application'},
+        {'title': 'Before/After Comparison', 'description': 'Transformation of aged stucco surface'},
+        {'title': 'Modern EIFS Finish', 'description': 'Contemporary EIFS application'},
     ]
     return render_template('gallery.html', gallery_items=gallery_items, business=BUSINESS_INFO)
 
@@ -89,9 +92,9 @@ def contact():
     success = request.args.get('success')
     if success:
         flash('Thank you for your message! We will get back to you within 24 hours.', 'success')
+
     return render_template('contact.html', business=BUSINESS_INFO)
 
-# Remove the debug mode completely for production
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
