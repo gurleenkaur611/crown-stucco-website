@@ -47,13 +47,19 @@
         .logo {
             display: flex;
             align-items: center;
+            gap: 1rem;
         }
 
         .logo img {
-            height: 50px;
+            height: 55px;
             width: auto;
-            max-width: 200px;
             object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
         }
 
         nav ul {
@@ -465,8 +471,11 @@
             }
 
             .logo img {
-                height: 40px;
-                max-width: 180px;
+                height: 45px;
+            }
+
+            .logo-text {
+                font-size: 1.2rem;
             }
 
             .mobile-menu {
@@ -530,7 +539,8 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Crown Stucco Ltd Logo">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Crown Stucco Ltd">
+                    <span class="logo-text">Crown Stucco Ltd</span>
                 </div>
                 <button class="mobile-menu" onclick="toggleMenu()">
                     <i class="fas fa-bars"></i>
