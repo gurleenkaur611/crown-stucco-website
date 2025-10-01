@@ -20,6 +20,40 @@
             background-color: #e8f5e8;
         }
 
+        /* Loading Spinner */
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #e8f5e8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease-out;
+        }
+
+        #loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #c8e6c9;
+            border-top: 5px solid #2d5a3d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -517,6 +551,11 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
     <header>
         <div class="container">
             <div class="header-content">
@@ -616,16 +655,24 @@
             });
         });
 
-        // Auto-hide flash messages after 15 seconds
+        // Auto-hide flash messages and loading overlay
         document.addEventListener('DOMContentLoaded', function() {
+            // Hide loading overlay when page is fully loaded
+            const loadingOverlay = document.getElementById('loading-overlay');
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    loadingOverlay.classList.add('hidden');
+                }, 500);
+            });
+
             const flashMessages = document.querySelectorAll('.flash-message');
             flashMessages.forEach(function(message) {
                 setTimeout(function() {
                     message.style.opacity = '0';
                     setTimeout(function() {
                         message.style.display = 'none';
-                    }, 500); // Wait for fade out animation
-                }, 15000); // 15 seconds
+                    }, 500);
+                }, 15000);
             });
         });
     </script>
