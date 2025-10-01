@@ -136,9 +136,8 @@
             cursor: pointer;
         }
 
-        /* Mobile Menu Overlay */
+        /* Mobile Menu Overlay - FIXED */
         .mobile-menu-overlay {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -146,6 +145,14 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.8);
             z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-menu-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .mobile-menu-content {
@@ -513,7 +520,7 @@
 
         .footer-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmin(250px, 1fr));
             gap: 2rem;
             margin-bottom: 2rem;
         }
@@ -641,10 +648,10 @@
                 </button>
             </div>
             <ul class="mobile-menu-nav">
-                <li><a href="{{ url_for('home') }}">HOME</a></li>
-                <li><a href="{{ url_for('services') }}">SERVICES</a></li>
-                <li><a href="{{ url_for('gallery') }}">GALLERY</a></li>
-                <li><a href="{{ url_for('contact') }}">CONTACT</a></li>
+                <li><a href="{{ url_for('home') }}" onclick="closeMobileMenu()">HOME</a></li>
+                <li><a href="{{ url_for('services') }}" onclick="closeMobileMenu()">SERVICES</a></li>
+                <li><a href="{{ url_for('gallery') }}" onclick="closeMobileMenu()">GALLERY</a></li>
+                <li><a href="{{ url_for('contact') }}" onclick="closeMobileMenu()">CONTACT</a></li>
             </ul>
         </div>
     </div>
