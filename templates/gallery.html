@@ -7,17 +7,19 @@
     <div class="container">
         <h1 class="section-title">Our Work</h1>
         <p class="section-subtitle">Browse through our portfolio of completed projects showcasing our expertise in stucco application, EIFS systems, and custom work throughout Manitoba.</p>
-        
+
         <div class="gallery-grid">
             {% for item in gallery_items %}
-            <div class="gallery-item">
+            <div class="gallery-item" onclick="showPhotoMessage('{{ item.title }}')">
                 <h4>{{ item.title }}</h4>
                 <p>{{ item.description }}</p>
-                <small style="color: #2d5a3d; font-weight: bold;">Photos coming soon</small>
+                <div style="margin-top: 1rem; color: #2d5a3d; font-weight: bold;">
+                    <i class="fas fa-camera"></i> Click to view
+                </div>
             </div>
             {% endfor %}
         </div>
-        
+
         <div style="text-align: center; margin-top: 3rem; padding: 3rem; background: white; border-radius: 10px; border: 2px solid #c8e6c9;">
             <h3 style="color: #000000; margin-bottom: 1rem;">Want to See More?</h3>
             <p style="margin-bottom: 2rem; color: #000000;">Visit our Google Business page for more photos and customer reviews of our recent projects.</p>
@@ -51,4 +53,38 @@
         </div>
     </div>
 </section>
+
+<!-- Modal for photo message -->
+<div id="photoModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 3000; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 3rem; border-radius: 10px; text-align: center; max-width: 500px; margin: 2rem;">
+        <h3 style="color: #2d5a3d; margin-bottom: 1rem;" id="photoModalTitle">Photos Coming Soon</h3>
+        <p style="color: #000000; margin-bottom: 2rem;">We're currently updating our photo gallery. Please contact us to see recent photos of this type of project.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center;">
+            <a href="{{ url_for('contact') }}" class="cta-button primary">Contact Us</a>
+            <button onclick="closePhotoModal()" class="cta-button secondary" style="border: 2px solid #2d5a3d; color: #2d5a3d;">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function showPhotoMessage(projectTitle) {
+    document.getElementById('photoModalTitle').textContent = projectTitle + ' - Photos Coming Soon';
+    const modal = document.getElementById('photoModal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closePhotoModal() {
+    const modal = document.getElementById('photoModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal when clicking outside
+document.getElementById('photoModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closePhotoModal();
+    }
+});
+</script>
 {% endblock %}
