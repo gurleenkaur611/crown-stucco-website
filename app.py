@@ -1,12 +1,28 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import os
+from datetime import datetime
+from werkzeug.utils import secure_filename
+import json
 
 app = Flask(__name__)
-app.secret_key = 'crown_stucco_secret_key_2025'
+app.secret_key = 'Paramjot2025!'
 
-# Force production mode
-app.config['DEBUG'] = False
-app.config['TESTING'] = False
+# Admin password
+ADMIN_PASSWORD = 'Japjot2025!'
+
+# File upload configuration
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+MAX_FILE_SIZE = 16 * 1024 * 1024  # 16MB
+
+# Ensure upload directory exists
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 
 # Business Information
 BUSINESS_INFO = {
@@ -33,186 +49,94 @@ BUSINESS_INFO = {
 
 SERVICES = [
     {
-        'id': 'residential-stucco',
         'name': 'Residential Stucco',
-        'description': 'Professional stucco application for homes and residential properties.',
-        'icon': 'house',
-        'details': {
-            'overview': 'Transform your home with our expert residential stucco services. We provide durable, weather-resistant finishes that enhance your home\'s curb appeal and protect against Manitoba\'s harsh weather conditions.',
-            'features': [
-                'Weather-resistant exterior finishes',
-                'Energy-efficient insulation properties',
-                'Custom texture and color options',
-                'Long-lasting durability',
-                'Professional surface preparation',
-                'Quality material application'
-            ],
-            'process': [
-                'Initial consultation and site assessment',
-                'Surface preparation and cleaning',
-                'Base coat application',
-                'Mesh installation for reinforcement',
-                'Finish coat application',
-                'Final inspection and cleanup'
-            ]
-        }
+        'description': 'Professional stucco application for homes and residential properties. We provide durable, weather-resistant finishes that enhance your home\'s curb appeal.',
+        'icon': '🏠'
     },
     {
-        'id': 'commercial-stucco',
         'name': 'Commercial Stucco',
-        'description': 'Large-scale stucco solutions for commercial buildings and offices.',
-        'icon': 'building',
-        'details': {
-            'overview': 'Professional commercial stucco services for offices, retail spaces, and industrial facilities. We handle large-scale projects with efficient project management and quality results.',
-            'features': [
-                'Large-scale project management',
-                'Commercial-grade materials',
-                'Fire-resistant applications',
-                'Weather-resistant systems',
-                'Professional scheduling',
-                'Minimal business disruption'
-            ],
-            'process': [
-                'Project planning and timeline development',
-                'Site preparation and safety setup',
-                'Systematic application by sections',
-                'Quality control inspections',
-                'Final walkthrough and documentation',
-                'Warranty and maintenance guidance'
-            ]
-        }
+        'description': 'Large-scale stucco solutions for commercial buildings, offices, and industrial properties. Reliable service for business owners.',
+        'icon': '🏢'
     },
     {
-        'id': 'eifs-systems',
         'name': 'EIFS Systems',
-        'description': 'Exterior Insulation and Finish Systems installation.',
-        'icon': 'shield',
-        'details': {
-            'overview': 'EIFS (Exterior Insulation and Finish Systems) provide superior energy efficiency and modern aesthetics. These systems offer excellent insulation properties while maintaining design flexibility.',
-            'features': [
-                'Superior energy efficiency',
-                'Moisture barrier protection',
-                'Design flexibility',
-                'Lightweight construction',
-                'Crack-resistant finish',
-                'Modern aesthetic appeal'
-            ],
-            'process': [
-                'Substrate preparation',
-                'Insulation board installation',
-                'Base coat application',
-                'Mesh embedding',
-                'Finish coat application',
-                'Final detailing and sealing'
-            ]
-        }
+        'description': 'Exterior Insulation and Finish Systems (EIFS) installation for improved energy efficiency and modern aesthetics.',
+        'icon': '🛡️'
     },
     {
-        'id': 'house-wrap',
         'name': 'House Wrap Installation',
-        'description': 'Professional house wrap installation services.',
-        'icon': 'tools',
-        'details': {
-            'overview': 'House wrap installation protects your building structure from moisture and air infiltration while allowing vapor to escape. Essential preparation for stucco application.',
-            'features': [
-                'Moisture barrier protection',
-                'Air infiltration prevention',
-                'Vapor permeable design',
-                'Weather-resistant materials',
-                'Professional installation',
-                'Building code compliance'
-            ],
-            'process': [
-                'Wall surface inspection',
-                'Proper overlap installation',
-                'Seam sealing',
-                'Window and door integration',
-                'Quality inspection',
-                'Documentation for warranty'
-            ]
-        }
+        'description': 'Professional house wrap installation to protect your building structure from moisture and air infiltration.',
+        'icon': '🏗️'
     },
     {
-        'id': 'paper-wire',
         'name': 'Paper Wire Systems',
-        'description': 'Traditional paper wire application for stucco preparation.',
-        'icon': 'ruler',
-        'details': {
-            'overview': 'Traditional paper wire systems provide the foundation for quality stucco application. This time-tested method ensures proper adhesion and long-lasting results.',
-            'features': [
-                'Traditional proven method',
-                'Excellent adhesion base',
-                'Long-lasting foundation',
-                'Weather-resistant backing',
-                'Professional installation',
-                'Code-compliant application'
-            ],
-            'process': [
-                'Surface preparation',
-                'Paper backing installation',
-                'Wire mesh attachment',
-                'Corner and edge detailing',
-                'Inspection and approval',
-                'Ready for stucco application'
-            ]
-        }
+        'description': 'Traditional paper wire application for stucco base preparation, ensuring proper adhesion and longevity.',
+        'icon': '📋'
     },
     {
-        'id': 'custom-work',
         'name': 'Custom Work',
-        'description': 'Custom stucco work tailored to your requirements.',
-        'icon': 'star',
-        'details': {
-            'overview': 'We specialize in custom stucco work tailored to your specific requirements. No project is too unique for our experienced team.',
-            'features': [
-                'Unique design solutions',
-                'Custom texture creation',
-                'Architectural details',
-                'Color matching services',
-                'Decorative elements',
-                'Specialty applications'
-            ],
-            'process': [
-                'Design consultation',
-                'Custom solution development',
-                'Sample creation and approval',
-                'Specialized installation',
-                'Quality assurance',
-                'Final artistic touches'
-            ]
-        }
+        'description': 'We specialize in custom stucco work tailored to your specific requirements. No project is too unique for our experienced team.',
+        'icon': '⭐'
     }
 ]
+
+# Gallery data file
+GALLERY_DATA_FILE = 'gallery_data.json'
+
+
+def load_gallery_items():
+    """Load gallery items from JSON file"""
+    if os.path.exists(GALLERY_DATA_FILE):
+        with open(GALLERY_DATA_FILE, 'r') as f:
+            return json.load(f)
+    return []
+
+
+def save_gallery_items(items):
+    """Save gallery items to JSON file"""
+    with open(GALLERY_DATA_FILE, 'w') as f:
+        json.dump(items, f, indent=2)
+
+
+def allowed_file(filename):
+    """Check if file extension is allowed"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 @app.route('/')
 def home():
     return render_template('home.html', business=BUSINESS_INFO)
 
+
 @app.route('/services')
 def services():
     return render_template('services.html', services=SERVICES, business=BUSINESS_INFO)
 
-@app.route('/service/<service_id>')
-def service_detail(service_id):
-    service = next((s for s in SERVICES if s['id'] == service_id), None)
-    if not service:
-        return redirect(url_for('services'))
-    return render_template('service_detail.html', service=service, business=BUSINESS_INFO)
 
 @app.route('/gallery')
 def gallery():
-    gallery_items = [
-        {'title': 'Residential Exterior Project', 'description': 'Complete home exterior stucco application'},
-        {'title': 'Commercial Building', 'description': 'Large-scale commercial stucco project'},
-        {'title': 'EIFS Installation', 'description': 'Energy-efficient EIFS system application'},
-        {'title': 'Custom Texture Work', 'description': 'Specialized custom texture stucco finish'},
-        {'title': 'House Wrap Installation', 'description': 'Professional house wrap and preparation'},
-        {'title': 'Repair and Restoration', 'description': 'Expert stucco repair and color matching'},
-        {'title': 'Interior Specialty Work', 'description': 'Custom interior plaster application'},
-        {'title': 'Before/After Comparison', 'description': 'Transformation of aged stucco surface'},
-        {'title': 'Modern EIFS Finish', 'description': 'Contemporary EIFS application'},
-    ]
+    # Load real gallery items from JSON file
+    gallery_items = load_gallery_items()
+
+    # If no items, show placeholders
+    if not gallery_items:
+        gallery_items = [
+            {'title': 'Residential Exterior Project', 'description': 'Complete home exterior stucco application',
+             'category': 'residential'},
+            {'title': 'Commercial Building', 'description': 'Large-scale commercial stucco project',
+             'category': 'commercial'},
+            {'title': 'EIFS Installation', 'description': 'Energy-efficient EIFS system application',
+             'category': 'eifs'},
+            {'title': 'Custom Texture Work', 'description': 'Specialized custom texture stucco finish',
+             'category': 'custom'},
+            {'title': 'House Wrap Installation', 'description': 'Professional house wrap and preparation',
+             'category': 'residential'},
+            {'title': 'Repair and Restoration', 'description': 'Expert stucco repair and color matching',
+             'category': 'repair'},
+        ]
+
     return render_template('gallery.html', gallery_items=gallery_items, business=BUSINESS_INFO)
+
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -222,6 +146,143 @@ def contact():
 
     return render_template('contact.html', business=BUSINESS_INFO)
 
+
+# ============================================
+# ADMIN ROUTES
+# ============================================
+
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    """Simple admin login page"""
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == ADMIN_PASSWORD:
+            session['admin_logged_in'] = True
+            flash('Welcome! You can now upload photos.', 'success')
+            return redirect(url_for('admin_panel'))
+        else:
+            flash('Incorrect password. Please try again.', 'error')
+
+    return render_template('admin_login.html', business=BUSINESS_INFO)
+
+
+@app.route('/admin')
+def admin_panel():
+    """Admin panel for photo management"""
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
+    gallery_items = load_gallery_items()
+    return render_template('admin.html', business=BUSINESS_INFO, gallery_items=gallery_items)
+
+
+@app.route('/admin/upload', methods=['POST'])
+def admin_upload():
+    """Handle photo upload"""
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
+    # Check if file was uploaded
+    if 'photo' not in request.files:
+        flash('No photo selected', 'error')
+        return redirect(url_for('admin_panel'))
+
+    file = request.files['photo']
+
+    # Check if file is empty
+    if file.filename == '':
+        flash('No photo selected', 'error')
+        return redirect(url_for('admin_panel'))
+
+    # Check if file is allowed
+    if file and allowed_file(file.filename):
+        # Secure the filename
+        filename = secure_filename(file.filename)
+
+        # Add timestamp to avoid overwriting
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f"{timestamp}_{filename}"
+
+        # Save file
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+
+        # Get form data
+        title = request.form.get('title', 'Untitled Project')
+        description = request.form.get('description', '')
+        category = request.form.get('category', 'residential')
+
+        # Load current gallery items
+        gallery_items = load_gallery_items()
+
+        # Add new item
+        new_item = {
+            'id': len(gallery_items) + 1,
+            'title': title,
+            'description': description,
+            'category': category,
+            'filename': filename,
+            'upload_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+
+        gallery_items.append(new_item)
+
+        # Save updated gallery
+        save_gallery_items(gallery_items)
+
+        flash('Photo uploaded successfully!', 'success')
+        return redirect(url_for('admin_panel'))
+
+    flash('Invalid file type. Please upload an image (JPG, PNG, GIF, WEBP)', 'error')
+    return redirect(url_for('admin_panel'))
+
+
+@app.route('/admin/delete/<int:photo_id>', methods=['POST'])
+def admin_delete(photo_id):
+    """Delete a photo"""
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('admin_login'))
+
+    gallery_items = load_gallery_items()
+
+    # Find and remove the item
+    item_to_delete = None
+    for item in gallery_items:
+        if item.get('id') == photo_id:
+            item_to_delete = item
+            break
+
+    if item_to_delete:
+        # Delete file
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], item_to_delete['filename'])
+        if os.path.exists(filepath):
+            os.remove(filepath)
+
+        # Remove from list
+        gallery_items.remove(item_to_delete)
+        save_gallery_items(gallery_items)
+
+        flash('Photo deleted successfully', 'success')
+    else:
+        flash('Photo not found', 'error')
+
+    return redirect(url_for('admin_panel'))
+
+
+@app.route('/admin/logout')
+def admin_logout():
+    """Logout admin"""
+    session.pop('admin_logged_in', None)
+    flash('Logged out successfully', 'success')
+    return redirect(url_for('home'))
+
+
+# Serve uploaded files
+@app.route('/static/uploads/<filename>')
+def uploaded_file(filename):
+    """Serve uploaded files"""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(debug=True)

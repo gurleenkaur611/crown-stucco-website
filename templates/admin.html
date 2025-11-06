@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Photo Upload - Crown Stucco Ltd{% endblock %}
+
+{% block content %}
+<section style="padding: 4rem 0; min-height: 80vh;">
+    <div class="container">
+        <h1 class="section-title">Gallery Photo Manager</h1>
+        <p class="section-subtitle">Upload and manage your project photos</p>
+
+        <!-- Upload Form -->
+        <div style="max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px; border: 2px solid #c8e6c9;">
+            <h3 style="color: #000000; margin-bottom: 2rem;">Upload New Photo</h3>
+
+            <form action="/admin/upload" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="photo">Select Photo *</label>
+                    <input type="file" id="photo" name="photo" accept="image/*" required
+                           style="padding: 0.5rem; border: 2px dashed #c8e6c9; background: #f8f9fa;">
+                    <small style="color: #666; display: block; margin-top: 0.5rem;">
+                        📱 On phone: Tap to choose from gallery or take new photo
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">Photo Title *</label>
+                    <input type="text" id="title" name="title" required
+                           placeholder="e.g., Residential Exterior - Johnson Home">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea id="description" name="description" rows="3" required
+                              placeholder="Brief description of the project..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Project Type</label>
+                    <select id="category" name="category">
+                        <option value="residential">Residential</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="eifs">EIFS Systems</option>
+                        <option value="custom">Custom Work</option>
+                        <option value="repair">Repair & Restoration</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="cta-button primary" style="width: 100%;">
+                    <i class="fas fa-upload"></i> Upload Photo
+                </button>
+            </form>
+        </div>
+
+        <!-- Current Photos -->
+        <div style="max-width: 1200px; margin: 3rem auto;">
+            <h3 style="color: #000000; margin-bottom: 2rem; text-align: center;">Current Photos</h3>
+            <div id="current-photos" class="gallery-grid">
+                <!-- Photos will load here -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: 10px; border: 2px solid #c8e6c9;">
+                    <i class="fas fa-images" style="font-size: 3rem; color: #c8e6c9; margin-bottom: 1rem;"></i>
+                    <p style="color: #666;">No photos uploaded yet. Upload your first project photo above!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Help Section -->
+        <div style="max-width: 800px; margin: 3rem auto; background: #fff3cd; padding: 2rem; border-radius: 10px; border: 2px solid #ffc107;">
+            <h4 style="color: #000000; margin-bottom: 1rem;"><i class="fas fa-lightbulb"></i> Quick Tips</h4>
+            <ul style="color: #000000; line-height: 1.8;">
+                <li><strong>Best photo quality:</strong> Take photos in good lighting, keep camera steady</li>
+                <li><strong>Before/After:</strong> Upload separate photos with clear titles</li>
+                <li><strong>Phone users:</strong> This page works great on mobile - bookmark it!</li>
+                <li><strong>File size:</strong> Photos will be automatically optimized for web</li>
+            </ul>
+        </div>
+
+        <!-- Logout -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="/admin/logout" class="cta-button secondary">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+</section>
+
+<script>
+// Preview selected image
+document.getElementById('photo').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const fileName = file.name;
+        const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
+        console.log(`Selected: ${fileName} (${fileSize} MB)`);
+    }
+});
+
+// Load existing photos (would fetch from server in real implementation)
+function loadPhotos() {
+    // This would be populated by the backend
+    // For now, it's a placeholder
+}
+
+document.addEventListener('DOMContentLoaded', loadPhotos);
+</script>
+{% endblock %}
