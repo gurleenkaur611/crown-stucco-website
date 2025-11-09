@@ -10,15 +10,24 @@
 
         <div class="gallery-grid">
             {% for item in gallery_items %}
-            <div class="gallery-item" style="{% if item.filename %}background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/static/uploads/{{ item.filename }}'); background-size: cover; background-position: center;{% endif %}">
-                <div style="position: relative; z-index: 1;">
-                    <h4 style="{% if item.filename %}color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);{% endif %}">{{ item.title }}</h4>
-                    <p style="{% if item.filename %}color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);{% endif %}">{{ item.description }}</p>
-                    {% if not item.filename %}
-                    <small style="color: #2d5a3d; font-weight: bold;">Photos coming soon</small>
-                    {% endif %}
+            {% if item.filename %}
+                <!-- Real uploaded photo -->
+                <div class="gallery-item" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/static/uploads/{{ item.filename }}'); background-size: cover; background-position: center; cursor: pointer;" onclick="viewPhoto('{{ item.title }}', '{{ item.description }}', '/static/uploads/{{ item.filename }}')">
+                    <div style="position: relative; z-index: 1;">
+                        <h4 style="color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">{{ item.title }}</h4>
+                        <p style="color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">{{ item.description }}</p>
+                    </div>
                 </div>
-            </div>
+            {% else %}
+                <!-- Placeholder - clickable -->
+                <div class="gallery-item" style="cursor: pointer; transition: all 0.3s ease;" onclick="showComingSoon()">
+                    <div style="position: relative; z-index: 1;">
+                        <h4>{{ item.title }}</h4>
+                        <p>{{ item.description }}</p>
+                        <small style="color: #2d5a3d; font-weight: bold;">Click for details</small>
+                    </div>
+                </div>
+            {% endif %}
             {% endfor %}
         </div>
 
@@ -55,4 +64,95 @@
         </div>
     </div>
 </section>
+
+<!-- Coming Soon Modal -->
+<div id="comingSoonModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 3rem; border-radius: 15px; max-width: 500px; text-align: center; border: 3px solid #c8e6c9; position: relative;">
+        <button onclick="closeModal()" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 2rem; cursor: pointer; color: #2d5a3d;">&times;</button>
+
+        <div style="font-size: 4rem; color: #2d5a3d; margin-bottom: 1rem;">
+            <i class="fas fa-camera"></i>
+        </div>
+
+        <h2 style="color: #000000; margin-bottom: 1rem;">Gallery Updating Soon!</h2>
+
+        <p style="color: #000000; font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem;">
+            We're currently updating our website with high-quality photos of our latest projects. Check back soon to see our amazing work!
+        </p>
+
+        <p style="color: #2d5a3d; font-weight: bold; margin-bottom: 2rem;">
+            In the meantime, feel free to contact us for project photos and references.
+        </p>
+
+        <div class="cta-buttons">
+            <a href="{{ url_for('contact') }}" class="cta-button primary">Contact Us</a>
+            <button onclick="closeModal()" class="cta-button secondary" style="border: 2px solid #2d5a3d; background: transparent; color: #2d5a3d;">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Photo Viewer Modal (for uploaded photos) -->
+<div id="photoModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="max-width: 90%; max-height: 90%; position: relative;">
+        <button onclick="closePhotoModal()" style="position: absolute; top: -40px; right: 0; background: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.5rem; cursor: pointer; color: #2d5a3d;">&times;</button>
+        <img id="photoModalImage" src="" style="max-width: 100%; max-height: 80vh; border-radius: 10px;">
+        <div style="background: white; padding: 1.5rem; border-radius: 0 0 10px 10px; text-align: center;">
+            <h3 id="photoModalTitle" style="color: #000000; margin-bottom: 0.5rem;"></h3>
+            <p id="photoModalDescription" style="color: #666;"></p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Show "Coming Soon" modal
+function showComingSoon() {
+    const modal = document.getElementById('comingSoonModal');
+    modal.style.display = 'flex';
+}
+
+// Close "Coming Soon" modal
+function closeModal() {
+    const modal = document.getElementById('comingSoonModal');
+    modal.style.display = 'none';
+}
+
+// View uploaded photo
+function viewPhoto(title, description, imageUrl) {
+    const modal = document.getElementById('photoModal');
+    document.getElementById('photoModalImage').src = imageUrl;
+    document.getElementById('photoModalTitle').textContent = title;
+    document.getElementById('photoModalDescription').textContent = description;
+    modal.style.display = 'flex';
+}
+
+// Close photo viewer
+function closePhotoModal() {
+    const modal = document.getElementById('photoModal');
+    modal.style.display = 'none';
+}
+
+// Close modals when clicking outside
+document.getElementById('comingSoonModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+
+document.getElementById('photoModal').addEventListener('click', function(e) {
+    if (e.target === this) closePhotoModal();
+});
+
+// Close modals with Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeModal();
+        closePhotoModal();
+    }
+});
+</script>
+
+<style>
+.gallery-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+</style>
 {% endblock %}
