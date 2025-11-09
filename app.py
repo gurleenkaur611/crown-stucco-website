@@ -11,7 +11,7 @@ app = Flask(__name__)
 app.secret_key = 'Paramjot2025!'
 
 # Admin password (CHANGE THIS!)
-ADMIN_PASSWORD = 'Japjot2025!'  # ← CHANGE THIS! Line 17
+ADMIN_PASSWORD = 'Japjot2025!'
 
 # File upload configuration
 UPLOAD_FOLDER = 'static/uploads'
@@ -52,37 +52,151 @@ SERVICES = [
         'id': 0,
         'name': 'Residential Stucco',
         'description': 'Professional stucco application for homes and residential properties. We provide durable, weather-resistant finishes that enhance your home\'s curb appeal.',
-        'icon': '🏠'
+        'icon': 'house',
+        'details': {
+            'overview': 'Transform your home with our expert residential stucco services. We provide durable, weather-resistant finishes that enhance your home\'s curb appeal and protect against Manitoba\'s harsh weather conditions.',
+            'features': [
+                'Durable, weather-resistant finishes',
+                'Energy-efficient exterior solutions',
+                'Wide range of colors and textures',
+                'Improved home value and curb appeal',
+                'Protection against harsh weather',
+                'Long-lasting quality materials'
+            ],
+            'process': [
+                'Initial consultation and site assessment',
+                'Detailed 3D drawings and project plan',
+                'Surface preparation and base installation',
+                'Professional stucco application',
+                'Finishing touches and texture work',
+                'Final inspection and cleanup'
+            ]
+        }
     },
     {
         'id': 1,
         'name': 'Commercial Stucco',
         'description': 'Large-scale stucco solutions for commercial buildings, offices, and industrial properties. Reliable service for business owners.',
-        'icon': '🏢'
+        'icon': 'building',
+        'details': {
+            'overview': 'Professional commercial stucco services for businesses throughout Manitoba. We deliver large-scale projects on time with minimal disruption to your operations.',
+            'features': [
+                'Large-scale project expertise',
+                'Minimal business disruption',
+                'Durable commercial-grade materials',
+                'Professional project management',
+                'Compliance with building codes',
+                'Warranty-backed workmanship'
+            ],
+            'process': [
+                'Commercial property assessment',
+                'Detailed project planning and scheduling',
+                'Coordination with building management',
+                'Professional installation by experienced crew',
+                'Quality control and inspection',
+                'Final walkthrough and documentation'
+            ]
+        }
     },
     {
         'id': 2,
         'name': 'EIFS Systems',
         'description': 'Exterior Insulation and Finish Systems (EIFS) installation for improved energy efficiency and modern aesthetics.',
-        'icon': '🛡️'
+        'icon': 'shield',
+        'details': {
+            'overview': 'Energy-efficient EIFS (Exterior Insulation and Finish Systems) installation that provides superior insulation, moisture management, and modern aesthetics for your property.',
+            'features': [
+                'Superior energy efficiency',
+                'Excellent moisture management',
+                'Lightweight and versatile',
+                'Wide range of design options',
+                'Crack-resistant technology',
+                'Reduced heating and cooling costs'
+            ],
+            'process': [
+                'Energy assessment and consultation',
+                'Custom EIFS system design',
+                'Surface preparation and base installation',
+                'Insulation board application',
+                'Base coat and reinforcement',
+                'Finish coat application and texturing'
+            ]
+        }
     },
     {
         'id': 3,
         'name': 'House Wrap Installation',
         'description': 'Professional house wrap installation to protect your building structure from moisture and air infiltration.',
-        'icon': '🏗️'
+        'icon': 'tools',
+        'details': {
+            'overview': 'Professional house wrap installation provides essential protection against moisture and air infiltration, creating a strong foundation for your stucco application.',
+            'features': [
+                'Superior moisture protection',
+                'Air infiltration prevention',
+                'Breathable membrane technology',
+                'Mold and mildew resistance',
+                'Energy efficiency improvement',
+                'Building code compliance'
+            ],
+            'process': [
+                'Building assessment and planning',
+                'Surface preparation and cleaning',
+                'House wrap installation with proper overlap',
+                'Sealing all joints and penetrations',
+                'Quality inspection',
+                'Ready for stucco application'
+            ]
+        }
     },
     {
         'id': 4,
         'name': 'Paper Wire Systems',
         'description': 'Traditional paper wire application for stucco base preparation, ensuring proper adhesion and longevity.',
-        'icon': '📋'
+        'icon': 'ruler',
+        'details': {
+            'overview': 'Traditional paper wire system installation provides the essential base for quality stucco application, ensuring proper adhesion and long-lasting results.',
+            'features': [
+                'Traditional proven method',
+                'Excellent stucco adhesion',
+                'Structural reinforcement',
+                'Crack prevention',
+                'Weather-resistant backing',
+                'Long-lasting durability'
+            ],
+            'process': [
+                'Wall surface preparation',
+                'Moisture barrier installation',
+                'Wire lath attachment and securing',
+                'Corner and edge reinforcement',
+                'Quality inspection',
+                'Ready for stucco application'
+            ]
+        }
     },
     {
         'id': 5,
         'name': 'Custom Work',
         'description': 'We specialize in custom stucco work tailored to your specific requirements. No project is too unique for our experienced team.',
-        'icon': '⭐'
+        'icon': 'star',
+        'details': {
+            'overview': 'Bring your unique vision to life with our custom stucco services. From decorative features to specialty textures, our experienced team can handle any custom requirement.',
+            'features': [
+                'Unlimited design possibilities',
+                'Custom textures and finishes',
+                'Decorative elements and features',
+                'Color matching expertise',
+                'Architectural detail work',
+                'One-of-a-kind solutions'
+            ],
+            'process': [
+                'Design consultation and vision planning',
+                'Custom 3D mockups and renderings',
+                'Material selection and approval',
+                'Skilled craftsman application',
+                'Detailed finishing work',
+                'Final inspection and client approval'
+            ]
+        }
     }
 ]
 
