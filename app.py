@@ -10,8 +10,8 @@ import json
 app = Flask(__name__)
 app.secret_key = 'Paramjot2025!'
 
-# Admin password
-ADMIN_PASSWORD = 'Japjot2025!'
+# Admin password (CHANGE THIS!)
+ADMIN_PASSWORD = 'Japjot2025!'  # ← CHANGE THIS! Line 17
 
 # File upload configuration
 UPLOAD_FOLDER = 'static/uploads'
@@ -49,31 +49,37 @@ BUSINESS_INFO = {
 
 SERVICES = [
     {
+        'id': 0,
         'name': 'Residential Stucco',
         'description': 'Professional stucco application for homes and residential properties. We provide durable, weather-resistant finishes that enhance your home\'s curb appeal.',
         'icon': '🏠'
     },
     {
+        'id': 1,
         'name': 'Commercial Stucco',
         'description': 'Large-scale stucco solutions for commercial buildings, offices, and industrial properties. Reliable service for business owners.',
         'icon': '🏢'
     },
     {
+        'id': 2,
         'name': 'EIFS Systems',
         'description': 'Exterior Insulation and Finish Systems (EIFS) installation for improved energy efficiency and modern aesthetics.',
         'icon': '🛡️'
     },
     {
+        'id': 3,
         'name': 'House Wrap Installation',
         'description': 'Professional house wrap installation to protect your building structure from moisture and air infiltration.',
         'icon': '🏗️'
     },
     {
+        'id': 4,
         'name': 'Paper Wire Systems',
         'description': 'Traditional paper wire application for stucco base preparation, ensuring proper adhesion and longevity.',
         'icon': '📋'
     },
     {
+        'id': 5,
         'name': 'Custom Work',
         'description': 'We specialize in custom stucco work tailored to your specific requirements. No project is too unique for our experienced team.',
         'icon': '⭐'
@@ -103,6 +109,10 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+# ============================================
+# PUBLIC ROUTES
+# ============================================
+
 @app.route('/')
 def home():
     return render_template('home.html', business=BUSINESS_INFO)
@@ -111,6 +121,19 @@ def home():
 @app.route('/services')
 def services():
     return render_template('services.html', services=SERVICES, business=BUSINESS_INFO)
+
+
+@app.route('/services/<int:service_id>')
+def service_detail(service_id):
+    """Display individual service detail page"""
+    # Check if service_id is valid
+    if 0 <= service_id < len(SERVICES):
+        service = SERVICES[service_id]
+        return render_template('service_detail.html', service=service, business=BUSINESS_INFO)
+    else:
+        # If invalid ID, redirect to services page
+        flash('Service not found', 'error')
+        return redirect(url_for('services'))
 
 
 @app.route('/gallery')
