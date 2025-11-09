@@ -8,10 +8,14 @@ from werkzeug.utils import secure_filename
 import json
 
 app = Flask(__name__)
-app.secret_key = 'Paramjot2025!'
+app.secret_key = 'Paramjot2025!'  # ← CHANGE THIS! Line 10
+
+# Configure session to expire on browser close
+app.config['SESSION_PERMANENT'] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = 0  # Session expires when browser closes
 
 # Admin password (CHANGE THIS!)
-ADMIN_PASSWORD = 'Japjot2025!'
+ADMIN_PASSWORD = 'Japjot2025!'  # ← CHANGE THIS! Line 17
 
 # File upload configuration
 UPLOAD_FOLDER = 'static/uploads'
@@ -294,6 +298,7 @@ def admin_login():
     if request.method == 'POST':
         password = request.form.get('password')
         if password == ADMIN_PASSWORD:
+            session.permanent = False  # Session expires when browser closes
             session['admin_logged_in'] = True
             flash('Welcome! You can now upload photos.', 'success')
             return redirect(url_for('admin_panel'))
