@@ -11,6 +11,7 @@
         <div class="contact-content">
             <div class="contact-form">
                 <h3 style="color: #000000; margin-bottom: 2rem; text-align: center;">Get Your Free Estimate</h3>
+
                 <form action="https://formspree.io/f/xqaykqaj" method="POST" id="contact-form">
                     <input type="hidden" name="_next" value="https://crown-stucco.onrender.com/contact?success=true">
                     <input type="hidden" name="_captcha" value="false">
@@ -18,16 +19,19 @@
 
                     <div class="form-group">
                         <label for="name">Full Name *</label>
-                        <input type="text" id="name" name="name" required>
+                        <input type="text" id="name" name="name" required placeholder="Your full name">
                     </div>
+
                     <div class="form-group">
                         <label for="email">Email Address *</label>
-                        <input type="email" id="email" name="email" required>
+                        <input type="email" id="email" name="email" required placeholder="your@email.com">
                     </div>
+
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" name="phone">
+                        <input type="tel" id="phone" name="phone" placeholder="204-000-0000">
                     </div>
+
                     <div class="form-group">
                         <label for="service">Service Needed</label>
                         <select id="service" name="service">
@@ -42,16 +46,22 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
+
                     <div class="form-group">
                         <label for="message">Project Details *</label>
-                        <textarea id="message" name="message" rows="5" required placeholder="Please describe your project, include approximate size, timeline, and any specific requirements. For accurate estimates, please mention if you have or need 3D drawings/plans."></textarea>
+                        <textarea id="message" name="message" rows="5" required
+                                  placeholder="Please describe your project, include approximate size, timeline, and any specific requirements. For accurate estimates, please mention if you have or need 3D drawings/plans."></textarea>
                     </div>
-                    <button type="submit" class="cta-button primary" style="width: 100%;">Send Message</button>
+
+                    <button type="submit" class="cta-button primary" style="width: 100%;">
+                        Send Message
+                    </button>
                 </form>
             </div>
 
             <div class="contact-info">
                 <h3 style="color: #000000; margin-bottom: 2rem;">Get In Touch</h3>
+
                 <div class="contact-item">
                     <div class="contact-item-icon"><i class="fas fa-phone"></i></div>
                     <div>
@@ -60,6 +70,7 @@
                         <a href="tel:{{ business.phone_toor }}" style="color: #2d5a3d; font-size: 1.1rem; font-weight: bold;">{{ business.phone_toor }}</a>
                     </div>
                 </div>
+
                 <div class="contact-item">
                     <div class="contact-item-icon"><i class="fas fa-envelope"></i></div>
                     <div>
@@ -67,6 +78,7 @@
                         <a href="mailto:{{ business.email }}" style="color: #2d5a3d; word-break: break-all;">{{ business.email }}</a>
                     </div>
                 </div>
+
                 <div class="contact-item">
                     <div class="contact-item-icon"><i class="fas fa-map-marker-alt"></i></div>
                     <div>
@@ -75,6 +87,7 @@
                         {{ business.city }}
                     </div>
                 </div>
+
                 <div class="contact-item">
                     <div class="contact-item-icon"><i class="fas fa-clock"></i></div>
                     <div>
@@ -83,6 +96,7 @@
                         Sunday: {{ business.hours.sunday }}
                     </div>
                 </div>
+
                 <div class="contact-item">
                     <div class="contact-item-icon"><i class="fas fa-map"></i></div>
                     <div>

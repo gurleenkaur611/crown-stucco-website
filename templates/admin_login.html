@@ -5,37 +5,63 @@
 {% block content %}
 <section style="padding: 4rem 0; min-height: 80vh; display: flex; align-items: center; justify-content: center;">
     <div class="container">
-        <div style="max-width: 400px; margin: 0 auto; background: white; padding: 3rem; border-radius: 10px; border: 2px solid #c8e6c9; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        <div style="max-width: 420px; margin: 0 auto; background: white; padding: 3rem; border-radius: 10px; border: 2px solid #c8e6c9; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+
+            <!-- Header -->
             <div style="text-align: center; margin-bottom: 2rem;">
                 <i class="fas fa-lock" style="font-size: 3rem; color: #2d5a3d; margin-bottom: 1rem;"></i>
                 <h2 style="color: #000000; margin-bottom: 0.5rem;">Admin Access</h2>
-                <p style="color: #666;">Enter password to manage photos</p>
+                <p style="color: #666;">Crown Stucco Ltd — Photo Manager</p>
             </div>
 
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div style="padding: 1rem; border-radius: 5px; margin-bottom: 1rem;
+                            background: {% if category == 'error' %}#f8d7da{% else %}#d4edda{% endif %};
+                            color: {% if category == 'error' %}#721c24{% else %}#155724{% endif %};
+                            border: 1px solid {% if category == 'error' %}#f5c6cb{% else %}#c3e6cb{% endif %};">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Login Form -->
             <form action="/admin/login" method="POST">
+
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required
-                           placeholder="Enter admin password"
-                           style="font-size: 1.1rem;">
+                    <label for="username" style="font-weight: bold; color: #000; display: block; margin-bottom: 0.5rem;">Username</label>
+                    <input type="text" id="username" name="username" required
+                           placeholder="Enter your username"
+                           style="width: 100%; padding: 12px; border: 2px solid #c8e6c9; border-radius: 5px; font-size: 1rem; color: #000; box-sizing: border-box;">
                 </div>
 
-                <button type="submit" class="cta-button primary" style="width: 100%;">
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label for="password" style="font-weight: bold; color: #000; display: block; margin-bottom: 0.5rem;">Password</label>
+                    <input type="password" id="password" name="password" required
+                           placeholder="Enter your password"
+                           style="width: 100%; padding: 12px; border: 2px solid #c8e6c9; border-radius: 5px; font-size: 1rem; color: #000; box-sizing: border-box;">
+                </div>
+
+                <button type="submit" class="cta-button primary" style="width: 100%; margin-top: 1.5rem; padding: 14px; font-size: 1rem; border: none; cursor: pointer; border-radius: 5px;">
                     <i class="fas fa-sign-in-alt"></i> Login
                 </button>
             </form>
 
+            <!-- Back to Home -->
             <div style="margin-top: 2rem; text-align: center;">
                 <a href="{{ url_for('home') }}" style="color: #2d5a3d; text-decoration: none;">
                     <i class="fas fa-arrow-left"></i> Back to Home
                 </a>
             </div>
 
-            <!-- Help Text -->
+            <!-- Help -->
             <div style="margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 5px; border-left: 3px solid #2d5a3d;">
                 <small style="color: #666;">
                     <strong>Need help?</strong><br>
-                    If you forgot the password, contact the website administrator.
+                    Contact Gurleen Gill if you have trouble logging in.
                 </small>
             </div>
         </div>
@@ -43,9 +69,8 @@
 </section>
 
 <script>
-// Auto-focus password field
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('password').focus();
+    document.getElementById('username').focus();
 });
 </script>
 {% endblock %}

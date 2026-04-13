@@ -5,38 +5,81 @@
 {% block content %}
 <section style="padding: 4rem 0; min-height: 80vh;">
     <div class="container">
+
+        <!-- Welcome Banner -->
+        <div style="background: linear-gradient(135deg, #2d5a3d, #4a7c59); color: white; padding: 1.5rem 2rem; border-radius: 10px; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h2 style="margin: 0; color: white;">
+                    <i class="fas fa-user-circle"></i>
+                    Welcome, {{ current_admin.display_name }}!
+                </h2>
+                <p style="margin: 0.3rem 0 0; color: #90ee90; font-size: 0.9rem;">
+                    Role: {{ current_admin.role }} &nbsp;|&nbsp;
+                    Logged in as: <strong>{{ current_admin.username }}</strong>
+                </p>
+            </div>
+            <a href="/admin/logout" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 18px; border-radius: 5px; text-decoration: none; font-weight: bold; border: 1px solid rgba(255,255,255,0.4);">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+
         <h1 class="section-title">Gallery Photo Manager</h1>
         <p class="section-subtitle">Upload and manage your project photos</p>
 
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div style="padding: 1rem; border-radius: 5px; margin-bottom: 1rem; max-width: 800px; margin-left: auto; margin-right: auto;
+                        background: {% if category == 'error' %}#f8d7da{% else %}#d4edda{% endif %};
+                        color: {% if category == 'error' %}#721c24{% else %}#155724{% endif %};
+                        border: 1px solid {% if category == 'error' %}#f5c6cb{% else %}#c3e6cb{% endif %};">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <!-- Upload Form -->
-        <div style="max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px; border: 2px solid #c8e6c9;">
-            <h3 style="color: #000000; margin-bottom: 2rem;">Upload New Photo</h3>
+        <div style="max-width: 800px; margin: 0 auto 3rem; background: white; padding: 2rem; border-radius: 10px; border: 2px solid #c8e6c9;">
+            <h3 style="color: #000000; margin-bottom: 2rem;">
+                <i class="fas fa-upload" style="color: #2d5a3d;"></i> Upload New Photo
+            </h3>
 
             <form action="/admin/upload" method="POST" enctype="multipart/form-data">
+
                 <div class="form-group">
                     <label for="photo">Select Photo *</label>
                     <input type="file" id="photo" name="photo" accept="image/*" required
-                           style="padding: 0.5rem; border: 2px dashed #c8e6c9; background: #f8f9fa;">
+                           style="width: 100%; padding: 0.75rem; border: 2px dashed #c8e6c9; border-radius: 5px; background: #f8f9fa; box-sizing: border-box;">
                     <small style="color: #666; display: block; margin-top: 0.5rem;">
-                        📱 On phone: Tap to choose from gallery or take new photo
+                        📱 On phone: Tap to choose from gallery or take a new photo
                     </small>
+                    <!-- Image Preview -->
+                    <div id="preview-container" style="display: none; margin-top: 1rem; text-align: center;">
+                        <img id="preview-image" style="max-width: 100%; max-height: 200px; border-radius: 8px; border: 2px solid #c8e6c9;">
+                        <p id="preview-info" style="color: #666; font-size: 0.85rem; margin-top: 0.5rem;"></p>
+                    </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="margin-top: 1rem;">
                     <label for="title">Photo Title *</label>
                     <input type="text" id="title" name="title" required
-                           placeholder="e.g., Residential Exterior - Johnson Home">
+                           placeholder="e.g., Residential Exterior — Thompson Home, Winnipeg"
+                           style="width: 100%; padding: 12px; border: 2px solid #c8e6c9; border-radius: 5px; font-size: 1rem; color: #000; box-sizing: border-box;">
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="margin-top: 1rem;">
                     <label for="description">Description (Optional)</label>
                     <textarea id="description" name="description" rows="3"
-                              placeholder="Brief description of the project (optional)..."></textarea>
+                              placeholder="Brief description of the project..."
+                              style="width: 100%; padding: 12px; border: 2px solid #c8e6c9; border-radius: 5px; font-size: 1rem; color: #000; box-sizing: border-box; resize: vertical;"></textarea>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="margin-top: 1rem;">
                     <label for="category">Project Type</label>
-                    <select id="category" name="category">
+                    <select id="category" name="category"
+                            style="width: 100%; padding: 12px; border: 2px solid #c8e6c9; border-radius: 5px; font-size: 1rem; color: #000; box-sizing: border-box;">
                         <option value="residential">Residential</option>
                         <option value="commercial">Commercial</option>
                         <option value="eifs">EIFS Systems</option>
@@ -46,61 +89,106 @@
                     </select>
                 </div>
 
-                <button type="submit" class="cta-button primary" style="width: 100%;">
+                <button type="submit" class="cta-button primary" style="width: 100%; margin-top: 1.5rem; padding: 14px; font-size: 1rem; border: none; cursor: pointer; border-radius: 5px;">
                     <i class="fas fa-upload"></i> Upload Photo
                 </button>
             </form>
         </div>
 
         <!-- Current Photos -->
-        <div style="max-width: 1200px; margin: 3rem auto;">
-            <h3 style="color: #000000; margin-bottom: 2rem; text-align: center;">Current Photos</h3>
-            <div id="current-photos" class="gallery-grid">
-                <!-- Photos will load here -->
-                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; background: white; border-radius: 10px; border: 2px solid #c8e6c9;">
-                    <i class="fas fa-images" style="font-size: 3rem; color: #c8e6c9; margin-bottom: 1rem;"></i>
-                    <p style="color: #666;">No photos uploaded yet. Upload your first project photo above!</p>
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h3 style="color: #000000; margin-bottom: 2rem; text-align: center;">
+                <i class="fas fa-images" style="color: #2d5a3d;"></i>
+                Current Photos ({{ gallery_items|length }})
+            </h3>
+
+            {% if gallery_items %}
+            <div class="gallery-grid">
+                {% for item in gallery_items %}
+                <div class="gallery-item" style="position: relative;
+                    {% if item.filename %}
+                        background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('/static/uploads/{{ item.filename }}');
+                        background-size: cover;
+                        background-position: center;
+                    {% endif %}">
+
+                    <!-- Delete Button -->
+                    <form action="/admin/delete/{{ item.id }}" method="POST"
+                          style="position: absolute; top: 10px; right: 10px; z-index: 10;"
+                          onsubmit="return confirm('Delete \'{{ item.title }}\'? This cannot be undone.');">
+                        <button type="submit" title="Delete photo"
+                                style="background: #dc3545; color: white; border: none; border-radius: 50%; width: 36px; height: 36px; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+
+                    <!-- Photo Info -->
+                    <div style="position: relative; z-index: 1; padding: 0.5rem;">
+                        <h4 style="{% if item.filename %}color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);{% else %}color: #000;{% endif %} margin-bottom: 0.3rem;">
+                            {{ item.title }}
+                        </h4>
+                        {% if item.description %}
+                        <p style="{% if item.filename %}color: #eee; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);{% else %}color: #333;{% endif %} font-size: 0.85rem; margin-bottom: 0.5rem;">
+                            {{ item.description }}
+                        </p>
+                        {% endif %}
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center;">
+                            <small style="{% if item.filename %}color: #90ee90; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);{% else %}color: #2d5a3d;{% endif %} font-weight: bold;">
+                                {{ item.category|title }}
+                            </small>
+                            {% if item.uploaded_by %}
+                            <small style="{% if item.filename %}color: #ccc; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);{% else %}color: #666;{% endif %}">
+                                · {{ item.uploaded_by }}
+                            </small>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
+
+            {% else %}
+            <div style="text-align: center; padding: 3rem; background: white; border-radius: 10px; border: 2px solid #c8e6c9;">
+                <i class="fas fa-images" style="font-size: 3rem; color: #c8e6c9; margin-bottom: 1rem; display: block;"></i>
+                <p style="color: #666; font-size: 1.1rem;">No photos uploaded yet.</p>
+                <p style="color: #999; font-size: 0.9rem;">Upload your first project photo above!</p>
+            </div>
+            {% endif %}
         </div>
 
-        <!-- Help Section -->
+        <!-- Tips -->
         <div style="max-width: 800px; margin: 3rem auto; background: #fff3cd; padding: 2rem; border-radius: 10px; border: 2px solid #ffc107;">
             <h4 style="color: #000000; margin-bottom: 1rem;"><i class="fas fa-lightbulb"></i> Quick Tips</h4>
-            <ul style="color: #000000; line-height: 1.8;">
+            <ul style="color: #000000; line-height: 1.8; padding-left: 1.2rem;">
                 <li><strong>Best photo quality:</strong> Take photos in good lighting, keep camera steady</li>
-                <li><strong>Before/After:</strong> Upload separate photos with clear titles</li>
-                <li><strong>Phone users:</strong> This page works great on mobile - bookmark it!</li>
-                <li><strong>File size:</strong> Photos will be automatically optimized for web</li>
+                <li><strong>Before/After:</strong> Upload separate photos with clear titles like "Before" and "After"</li>
+                <li><strong>Phone users:</strong> This page works great on mobile — bookmark it!</li>
+                <li><strong>File size:</strong> Up to 16MB per photo (JPG, PNG, WEBP, GIF)</li>
             </ul>
         </div>
 
-        <!-- Logout -->
-        <div style="text-align: center; margin-top: 2rem;">
-            <a href="/admin/logout" class="cta-button secondary">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-        </div>
     </div>
 </section>
 
 <script>
-// Preview selected image
+// Preview selected image before uploading
 document.getElementById('photo').addEventListener('change', function(e) {
     const file = e.target.files[0];
-    if (file) {
-        const fileName = file.name;
-        const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB
-        console.log(`Selected: ${fileName} (${fileSize} MB)`);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    const previewContainer = document.getElementById('preview-container');
+    const previewImage = document.getElementById('preview-image');
+    const previewInfo = document.getElementById('preview-info');
+
+    reader.onload = function(e) {
+        previewImage.src = e.target.result;
+        previewContainer.style.display = 'block';
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        previewInfo.textContent = `${file.name} — ${sizeMB} MB`;
+    };
+
+    reader.readAsDataURL(file);
 });
-
-// Load existing photos (would fetch from server in real implementation)
-function loadPhotos() {
-    // This would be populated by the backend
-    // For now, it's a placeholder
-}
-
-document.addEventListener('DOMContentLoaded', loadPhotos);
 </script>
 {% endblock %}
