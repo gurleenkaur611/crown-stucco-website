@@ -10,7 +10,6 @@ import json
 app = Flask(__name__)
 app.secret_key = 'Parmjot2025!'
 
-<<<<<<< HEAD
 # ============================================
 # SESSION CONFIG - stays logged in 7 days
 # ============================================
@@ -37,26 +36,15 @@ ADMIN_USERS = {
         'role': 'Admin'
     }
 }
-=======
-# Configure session - 7 day timeout (basically stays logged in)
-from datetime import timedelta
-
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # 7 days - stays logged in
-app.config['SESSION_REFRESH_EACH_REQUEST'] = True  # Reset timer on each action
-
-# Admin password
-ADMIN_PASSWORD = 'Japjot2025!'  #
->>>>>>> 247239ea45dfd492ec668f4db5726f2745ed7cc2
 
 # ============================================
-# EMAIL CONFIG - Gmail SMTP
-# Change these to your Gmail credentials
+# EMAIL CONFIG - Gmail SMTP (for future use)
 # ============================================
 EMAIL_CONFIG = {
     'smtp_server': 'smtp.gmail.com',
     'smtp_port': 587,
     'sender_email': 'crownstuccoltd@gmail.com',
-    'sender_password': os.environ.get('GMAIL_APP_PASSWORD', ''),  # Set in Render environment
+    'sender_password': os.environ.get('GMAIL_APP_PASSWORD', ''),
     'recipient_email': 'crownstuccoltd@gmail.com'
 }
 
@@ -297,152 +285,6 @@ def get_current_admin():
 
 
 # ============================================
-# EMAIL HELPER - Custom contact form
-# ============================================
-def send_contact_email(name, email, phone, service, message):
-    """
-    Send contact form email via Gmail SMTP.
-
-    SETUP REQUIRED:
-    1. Go to your Gmail account (crownstuccoltd@gmail.com)
-    2. Enable 2-Factor Authentication
-    3. Go to Google Account > Security > App Passwords
-    4. Create an App Password for "Mail"
-    5. Copy the 16-character password
-    6. In Render.com dashboard, go to your service > Environment
-    7. Add variable: GMAIL_APP_PASSWORD = (your 16-char app password)
-    """
-    sender_password = EMAIL_CONFIG['sender_password']
-
-    if not sender_password:
-        # Log the inquiry instead of failing silently
-        print(f"[CONTACT FORM] New inquiry from {name} ({email}) - Gmail not configured yet")
-        return True  # Return True so user still sees success message
-
-    try:
-        # Build the email
-        msg = MIMEMultipart('alternative')
-        msg['Subject'] = f"New Stucco Inquiry from {name}"
-        msg['From'] = EMAIL_CONFIG['sender_email']
-        msg['To'] = EMAIL_CONFIG['recipient_email']
-        msg['Reply-To'] = email  # So you can reply directly to the customer
-
-        # Format service name nicely
-        service_display = service.replace('-', ' ').title() if service else 'Not specified'
-        phone_display = phone if phone else 'Not provided'
-        submitted_at = datetime.now().strftime('%B %d, %Y at %I:%M %p')
-
-        # Plain text version
-        text_body = f"""
-New inquiry from your Crown Stucco Ltd website!
-
---- CUSTOMER DETAILS ---
-Name:    {name}
-Email:   {email}
-Phone:   {phone_display}
-Service: {service_display}
-
---- MESSAGE ---
-{message}
-
---- SUBMISSION INFO ---
-Submitted: {submitted_at}
-Website:   crownstucco.ltd
-
----
-Reply directly to this email to respond to {name}.
-        """.strip()
-
-        # HTML version (nice formatting)
-        html_body = f"""
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        body {{ font-family: Arial, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }}
-        .container {{ max-width: 600px; margin: 0 auto; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }}
-        .header {{ background: linear-gradient(135deg, #2d5a3d, #4a7c59); color: white; padding: 30px; text-align: center; }}
-        .header h1 {{ margin: 0; font-size: 1.5rem; }}
-        .header p {{ margin: 5px 0 0; color: #90ee90; font-size: 0.9rem; }}
-        .body {{ padding: 30px; }}
-        .field {{ background: #f8f9fa; border-left: 4px solid #2d5a3d; padding: 12px 15px; margin-bottom: 15px; border-radius: 0 5px 5px 0; }}
-        .field label {{ font-size: 0.75rem; text-transform: uppercase; color: #666; font-weight: bold; display: block; margin-bottom: 3px; }}
-        .field span {{ font-size: 1rem; color: #000; font-weight: 500; }}
-        .message-box {{ background: #f0f7f0; border: 2px solid #c8e6c9; border-radius: 8px; padding: 20px; margin: 20px 0; }}
-        .message-box label {{ font-weight: bold; color: #2d5a3d; display: block; margin-bottom: 8px; }}
-        .message-box p {{ margin: 0; color: #000; line-height: 1.6; white-space: pre-wrap; }}
-        .footer {{ background: #f0f7f0; padding: 20px; text-align: center; border-top: 2px solid #c8e6c9; }}
-        .footer p {{ margin: 0; color: #666; font-size: 0.85rem; }}
-        .reply-btn {{ display: inline-block; background: #2d5a3d; color: white; padding: 12px 25px; border-radius: 5px; text-decoration: none; font-weight: bold; margin: 15px 0; }}
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>📬 New Website Inquiry</h1>
-            <p>Crown Stucco Ltd — crownstucco.ltd</p>
-        </div>
-        <div class="body">
-            <p style="color:#000; margin-top:0;">You have a new inquiry from your website. Here are the details:</p>
-
-            <div class="field">
-                <label>Full Name</label>
-                <span>{name}</span>
-            </div>
-            <div class="field">
-                <label>Email Address</label>
-                <span><a href="mailto:{email}" style="color:#2d5a3d;">{email}</a></span>
-            </div>
-            <div class="field">
-                <label>Phone Number</label>
-                <span>{phone_display}</span>
-            </div>
-            <div class="field">
-                <label>Service Requested</label>
-                <span>{service_display}</span>
-            </div>
-
-            <div class="message-box">
-                <label>📝 Project Details</label>
-                <p>{message}</p>
-            </div>
-
-            <div style="text-align:center;">
-                <a href="mailto:{email}?subject=Re: Your Crown Stucco Inquiry" class="reply-btn">
-                    ✉️ Reply to {name}
-                </a>
-            </div>
-        </div>
-        <div class="footer">
-            <p>Submitted: {submitted_at}</p>
-            <p style="margin-top:5px;">This email was sent automatically from crownstucco.ltd</p>
-        </div>
-    </div>
-</body>
-</html>
-        """
-
-        msg.attach(MIMEText(text_body, 'plain'))
-        msg.attach(MIMEText(html_body, 'html'))
-
-        # Send via Gmail SMTP
-        with smtplib.SMTP(EMAIL_CONFIG['smtp_server'], EMAIL_CONFIG['smtp_port']) as server:
-            server.starttls()
-            server.login(EMAIL_CONFIG['sender_email'], sender_password)
-            server.sendmail(
-                EMAIL_CONFIG['sender_email'],
-                EMAIL_CONFIG['recipient_email'],
-                msg.as_string()
-            )
-
-        return True
-
-    except Exception as e:
-        print(f"[EMAIL ERROR] Failed to send email: {e}")
-        return False
-
-
-# ============================================
 # PUBLIC ROUTES
 # ============================================
 
@@ -458,7 +300,6 @@ def services():
 
 @app.route('/services/<int:service_id>')
 def service_detail(service_id):
-    """Display individual service detail page"""
     if 0 <= service_id < len(SERVICES):
         service = SERVICES[service_id]
         return render_template('service_detail.html', service=service, business=BUSINESS_INFO)
@@ -486,32 +327,18 @@ def gallery():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
-    """Contact form - handles both GET (show form) and POST (send email)"""
-    if request.method == 'POST':
-        # Get form data
-        name = request.form.get('name', '').strip()
-        email = request.form.get('email', '').strip()
-        phone = request.form.get('phone', '').strip()
-        service = request.form.get('service', '').strip()
-        message = request.form.get('message', '').strip()
-
-        # Basic validation
-        if not name or not email or not message:
-            flash('Please fill in all required fields (Name, Email, Message).', 'error')
-            return render_template('contact.html', business=BUSINESS_INFO)
-
-        # Send the email
-        email_sent = send_contact_email(name, email, phone, service, message)
-
-        if email_sent:
-            flash(f'Thank you {name}! Your message has been sent. We will get back to you within 24 hours.', 'success')
-            return redirect(url_for('contact'))
-        else:
-            flash('Something went wrong sending your message. Please call us directly at 204-898-2832.', 'error')
-            return render_template('contact.html', business=BUSINESS_INFO)
-
-    # GET request - just show the form
+    success = request.args.get('success')
+    if success:
+        flash('Thank you for your message! We will get back to you within 24 hours.', 'success')
     return render_template('contact.html', business=BUSINESS_INFO)
+
+
+@app.route('/careers')
+def careers():
+    applied = request.args.get('applied')
+    if applied:
+        flash('Thank you for applying! We will review your application and get back to you soon.', 'success')
+    return render_template('careers.html', business=BUSINESS_INFO)
 
 
 # ============================================
@@ -520,27 +347,21 @@ def contact():
 
 @app.route('/admin/login', methods=['GET', 'POST'])
 def admin_login():
-    """Multi-user admin login page"""
-    # If already logged in, go to panel
     if is_admin_logged_in():
         return redirect(url_for('admin_panel'))
 
     if request.method == 'POST':
-<<<<<<< HEAD
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
 
-        # Check username exists
         if username not in ADMIN_USERS:
             flash('Invalid username or password.', 'error')
             return render_template('admin_login.html', business=BUSINESS_INFO)
 
-        # Check password
         if ADMIN_USERS[username]['password'] != password:
             flash('Invalid username or password.', 'error')
             return render_template('admin_login.html', business=BUSINESS_INFO)
 
-        # Success - set session
         session.permanent = True
         session['admin_logged_in'] = True
         session['admin_username'] = username
@@ -548,23 +369,12 @@ def admin_login():
         display_name = ADMIN_USERS[username]['display_name']
         flash(f'Welcome, {display_name}! You are now logged in.', 'success')
         return redirect(url_for('admin_panel'))
-=======
-        password = request.form.get('password')
-        if password == ADMIN_PASSWORD:
-            session.permanent = True  # Use the configured PERMANENT_SESSION_LIFETIME (30 min)
-            session['admin_logged_in'] = True
-            flash('Welcome! You can now upload photos.', 'success')
-            return redirect(url_for('admin_panel'))
-        else:
-            flash('Incorrect password. Please try again.', 'error')
->>>>>>> 247239ea45dfd492ec668f4db5726f2745ed7cc2
 
     return render_template('admin_login.html', business=BUSINESS_INFO)
 
 
 @app.route('/admin')
 def admin_panel():
-    """Admin panel for photo management"""
     if not is_admin_logged_in():
         return redirect(url_for('admin_login'))
 
@@ -575,7 +385,6 @@ def admin_panel():
 
 @app.route('/admin/upload', methods=['POST'])
 def admin_upload():
-    """Handle photo upload"""
     if not is_admin_logged_in():
         return redirect(url_for('admin_login'))
 
@@ -603,7 +412,6 @@ def admin_upload():
 
         gallery_items = load_gallery_items()
 
-        # Track who uploaded the photo
         current_admin = get_current_admin()
         uploaded_by = current_admin['display_name'] if current_admin else 'Unknown'
 
@@ -629,7 +437,6 @@ def admin_upload():
 
 @app.route('/admin/delete/<int:photo_id>', methods=['POST'])
 def admin_delete(photo_id):
-    """Delete a photo"""
     if not is_admin_logged_in():
         return redirect(url_for('admin_login'))
 
@@ -649,7 +456,7 @@ def admin_delete(photo_id):
         gallery_items.remove(item_to_delete)
         save_gallery_items(gallery_items)
 
-        flash(f'Photo deleted successfully.', 'success')
+        flash('Photo deleted successfully.', 'success')
     else:
         flash('Photo not found.', 'error')
 
@@ -658,7 +465,6 @@ def admin_delete(photo_id):
 
 @app.route('/admin/logout')
 def admin_logout():
-    """Logout admin"""
     current_admin = get_current_admin()
     name = current_admin['display_name'] if current_admin else 'Admin'
 
@@ -669,7 +475,6 @@ def admin_logout():
     return redirect(url_for('home'))
 
 
-# Serve uploaded files
 @app.route('/static/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
