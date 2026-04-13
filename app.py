@@ -10,6 +10,7 @@ import json
 app = Flask(__name__)
 app.secret_key = 'Parmjot2025!'
 
+<<<<<<< HEAD
 # ============================================
 # SESSION CONFIG - stays logged in 7 days
 # ============================================
@@ -36,6 +37,16 @@ ADMIN_USERS = {
         'role': 'Admin'
     }
 }
+=======
+# Configure session - 7 day timeout (basically stays logged in)
+from datetime import timedelta
+
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)  # 7 days - stays logged in
+app.config['SESSION_REFRESH_EACH_REQUEST'] = True  # Reset timer on each action
+
+# Admin password
+ADMIN_PASSWORD = 'Japjot2025!'  #
+>>>>>>> 247239ea45dfd492ec668f4db5726f2745ed7cc2
 
 # ============================================
 # EMAIL CONFIG - Gmail SMTP
@@ -515,6 +526,7 @@ def admin_login():
         return redirect(url_for('admin_panel'))
 
     if request.method == 'POST':
+<<<<<<< HEAD
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
 
@@ -536,6 +548,16 @@ def admin_login():
         display_name = ADMIN_USERS[username]['display_name']
         flash(f'Welcome, {display_name}! You are now logged in.', 'success')
         return redirect(url_for('admin_panel'))
+=======
+        password = request.form.get('password')
+        if password == ADMIN_PASSWORD:
+            session.permanent = True  # Use the configured PERMANENT_SESSION_LIFETIME (30 min)
+            session['admin_logged_in'] = True
+            flash('Welcome! You can now upload photos.', 'success')
+            return redirect(url_for('admin_panel'))
+        else:
+            flash('Incorrect password. Please try again.', 'error')
+>>>>>>> 247239ea45dfd492ec668f4db5726f2745ed7cc2
 
     return render_template('admin_login.html', business=BUSINESS_INFO)
 
