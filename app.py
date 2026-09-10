@@ -21,17 +21,17 @@ app.config['SESSION_REFRESH_EACH_REQUEST'] = True
 # ============================================
 ADMIN_USERS = {
     'Harminder Gill': {
-        'password': 'Japjotparamjot!',
+        'password': 'Crown2025!',
         'display_name': 'Harminder Gill',
         'role': 'Owner'
     },
     'Harjinder Toor': {
-        'password': 'Namneetnavraj!',
+        'password': 'Stucco2025!',
         'display_name': 'Harjinder Toor',
         'role': 'Owner'
     },
     'Gurleen Gill': {
-        'password': 'Gurleengill!',
+        'password': 'Website2025!',
         'display_name': 'Gurleen Gill',
         'role': 'Admin'
     }
@@ -65,8 +65,8 @@ app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 # ============================================
 BUSINESS_INFO = {
     'name': 'Crown Stucco Ltd',
-    'address': '46 Tivoli Lane',
-    'city': 'West St. Paul, MB',
+    'address': '888 Sargent Ave., Room 4',
+    'city': 'Winnipeg, MB R3E 0C7',
     'phone': '204-898-2832',
     'phone_toor': '204-962-8082',
     'email': 'crownstuccoltd@gmail.com',
@@ -248,7 +248,6 @@ GALLERY_DATA_FILE = 'gallery_data.json'
 
 
 def load_gallery_items():
-    """Load gallery items from JSON file"""
     if os.path.exists(GALLERY_DATA_FILE):
         with open(GALLERY_DATA_FILE, 'r') as f:
             return json.load(f)
@@ -256,13 +255,11 @@ def load_gallery_items():
 
 
 def save_gallery_items(items):
-    """Save gallery items to JSON file"""
     with open(GALLERY_DATA_FILE, 'w') as f:
         json.dump(items, f, indent=2)
 
 
 def allowed_file(filename):
-    """Check if file extension is allowed"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
@@ -270,12 +267,10 @@ def allowed_file(filename):
 # ADMIN HELPERS
 # ============================================
 def is_admin_logged_in():
-    """Check if any admin user is logged in"""
     return session.get('admin_logged_in') and session.get('admin_username')
 
 
 def get_current_admin():
-    """Get the currently logged in admin user info"""
     username = session.get('admin_username')
     if username and username in ADMIN_USERS:
         user = ADMIN_USERS[username].copy()
