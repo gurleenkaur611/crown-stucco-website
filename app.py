@@ -21,17 +21,17 @@ app.config['SESSION_REFRESH_EACH_REQUEST'] = True
 # ============================================
 ADMIN_USERS = {
     'Harminder Gill': {
-        'password': 'Crown2025!',
+        'password': 'Japjotparamjot!',
         'display_name': 'Harminder Gill',
         'role': 'Owner'
     },
     'Harjinder Toor': {
-        'password': 'Stucco2025!',
+        'password': 'Namneetnavraj!',
         'display_name': 'Harjinder Toor',
         'role': 'Owner'
     },
     'Gurleen Gill': {
-        'password': 'Website2025!',
+        'password': 'Gurleen1636!',
         'display_name': 'Gurleen Gill',
         'role': 'Admin'
     }
